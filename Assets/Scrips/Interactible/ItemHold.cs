@@ -7,10 +7,11 @@ public class ItemHold : MonoBehaviour, InteractableIFace
 {
 
     public Transform heldParent;
-    public float maxDistance => 6.0f;
+    public float maxDistance => 5.0f;
     private bool isHeld=false;
     [SerializeField] private float moveForce = 250.0f;
     [SerializeField] private float dragForce = 5.0f;
+
 
     public void OnStartHover()
     {
@@ -64,10 +65,11 @@ public class ItemHold : MonoBehaviour, InteractableIFace
 
     private void MoveObject()
     {
-        if(Vector3.Distance(this.transform.position,heldParent.position)>0.1f)
+        if(Vector3.Distance(this.transform.position,heldParent.position)>0.01f)
         {
             Vector3 moveDir = (heldParent.position - this.transform.position);
             this.GetComponent<Rigidbody>().AddForce(moveDir*moveForce);
+            //this.transform.position = heldParent.position;
         }
     }
 
