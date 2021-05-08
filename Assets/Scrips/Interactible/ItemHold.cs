@@ -3,18 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemHold : MonoBehaviour, InteractableIFace
+public class ItemHold : InteractibleBase
 {
 
     public Transform heldParent;
-    public float maxDistance => 5.0f;
+
     private bool isHeld=false;
+    public override float maxDistance => 10.0f;
     [SerializeField] private float moveForce = 250.0f;
     [SerializeField] private float dragForce = 5.0f;
 
 
-    public void OnStartHover()
+    public override void OnStartHover()
     {
+        base.OnStartHover();
         if (isHeld)
         {
             DropObject();
@@ -22,7 +24,7 @@ public class ItemHold : MonoBehaviour, InteractableIFace
         }
     }
 
-    public void OnInteract()
+    public override void OnInteract()
     {
         if (!isHeld)
         {
@@ -34,8 +36,9 @@ public class ItemHold : MonoBehaviour, InteractableIFace
         }
     }
 
-    public void OnEndHover()
+    public override void OnEndHover()
     {
+        base.OnEndHover();
         if (isHeld)
         {
             DropObject();
@@ -43,7 +46,7 @@ public class ItemHold : MonoBehaviour, InteractableIFace
         }
     }
 
-    public void Tick()
+    public override void Tick()
     {
         if (isHeld)
             MoveObject();
@@ -67,9 +70,9 @@ public class ItemHold : MonoBehaviour, InteractableIFace
     {
         if(Vector3.Distance(this.transform.position,heldParent.position)>0.01f)
         {
-            Vector3 moveDir = (heldParent.position - this.transform.position);
-            this.GetComponent<Rigidbody>().AddForce(moveDir*moveForce);
-            //this.transform.position = heldParent.position;
+            //Vector3 moveDir = (heldParent.position - this.transform.position);
+            //this.GetComponent<Rigidbody>().AddForce(moveDir*moveForce);
+            this.transform.position = heldParent.position;
         }
     }
 

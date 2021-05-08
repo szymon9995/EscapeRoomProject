@@ -2,34 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ButtonPush : MonoBehaviour, InteractableIFace
+public class ButtonPush : InteractibleBase
 {
-    [SerializeField] private Animator doorAnimation = null;
+    private ResponseIFace responseIFace = null;
+    [SerializeField] private GameObject responseObject = null;
 
-    public float maxDistance => 5.0f;
 
-    public void OnEndHover()
+    protected override void Start()
     {
-        Debug.Log("Starting hovering on doorTriger");
-    }
-
-    public void OnInteract()
-    {
-        AnimatorStateInfo tmp = doorAnimation.GetCurrentAnimatorStateInfo(0);
-        if (tmp.IsName("Idle") || tmp.IsName("DoorClose"))
+        base.Start();
+        if(responseObject!=null)
         {
-            doorAnimation.Play("DoorOpen", 0, 0);
-            return;
-        }
-        if (tmp.IsName("DoorOpen"))
-        {
-            doorAnimation.Play("DoorClose", 0, 0);
+            responseIFace = responseObject.GetComponent<ResponseIFace>();
         }
     }
 
-    public void OnStartHover()
+
+    public override void OnInteract()
     {
-        Debug.Log("Ending hovering on doorTriger");
+        if(responseIFace != null)
+        {
+            responseIFace.Response();
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -37,26 +31,4 @@ public class ButtonPush : MonoBehaviour, InteractableIFace
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, maxDistance);
     }
-
-    public void Tick()
-    {
-
-    }
-
-    /*
-    private void OnMouseDown()
-    {
-        AnimatorStateInfo tmp = doorAnimation.GetCurrentAnimatorStateInfo(0);
-        if (tmp.IsName("Idle") || tmp.IsName("DoorClose"))
-        {
-            doorAnimation.Play("DoorOpen", 0, 0);
-            return;
-        }
-        if(tmp.IsName("DoorOpen"))
-        {
-            doorAnimation.Play("DoorClose", 0, 0);
-        }
-        
-    }
-    */
 }

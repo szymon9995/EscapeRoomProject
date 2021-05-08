@@ -6,11 +6,14 @@ public class PlayerLook : MonoBehaviour
 {
     public float mouseSensivity = 100f;
     public Transform playerBody;
+    public Texture2D cursorTexture;
 
     private float yRotation = 0f;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        if (cursorTexture != null)
+            Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.ForceSoftware);
     }
 
 
