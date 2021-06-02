@@ -6,7 +6,7 @@ public class Inventory : MonoBehaviour
 {
 
     public static Inventory instance;
-
+    
     public void Awake()
     {
         if (instance != null)
@@ -18,11 +18,14 @@ public class Inventory : MonoBehaviour
         instance = this;
     }
 
-    public List<Item> items = new List<Item>();
+    public List<Item> items;
 
     public void AddItem(Item item)
     {
-        items.Add(item);
+        if (items.Exists(it => it.ID == item.ID))
+            items.Find(i => i.ID == item.ID).Amount++;
+        else
+            items.Add(item);
     }
 
     public void RemoveItem(Item item)
@@ -33,5 +36,19 @@ public class Inventory : MonoBehaviour
     public void ClearInventory()
     {
         items.Clear();
+    }
+
+    public bool containItem(int id)
+    {
+        return items.Exists(item => item.ID == id);
+    }
+
+    public bool containItemAndUse(int id)
+    {
+        if (items.Exists(item => item.ID == id) == false)
+            return false;
+
+        RemoveItem(items.Find(it=> it.ID == id) );
+        return true;
     }
 }

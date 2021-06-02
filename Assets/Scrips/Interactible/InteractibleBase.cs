@@ -11,7 +11,8 @@ public class InteractibleBase : MonoBehaviour, InteractableIFace
     protected List<Material []> originalMaterials = new List<Material []>();
     protected List<Material []> outlineMateials = new List<Material []>();
     protected Shader outlineShader;
-    protected Color color = Color.red;
+    protected virtual Color color => Color.red;
+    protected virtual float outlineWidth => 0.1f;
     protected virtual void Start()
     {
 
@@ -22,7 +23,14 @@ public class InteractibleBase : MonoBehaviour, InteractableIFace
             originalMaterials.Add(meshTmp.materials);
             List<Material> tmpList = new List<Material>();
             tmpList.AddRange(meshTmp.materials);
-            tmpList.Add(new Material(outlineShader));
+
+            Material tmpOut = new Material(outlineShader);
+            tmpOut.SetTexture("_MainTex", meshTmp.material.mainTexture);
+            tmpOut.SetColor("_OutlineColor", color);
+            //outlineWidth = Mathf.Clamp(outlineWidth, 0.0f, 1.0f);
+            tmpOut.SetFloat("_Outline", outlineWidth);
+
+            tmpList.Add(tmpOut);
             outlineMateials.Add(tmpList.ToArray());
         }
         else
@@ -36,7 +44,14 @@ public class InteractibleBase : MonoBehaviour, InteractableIFace
                     originalMaterials.Add(renderer.materials);
                     List<Material> tmpList = new List<Material>();
                     tmpList.AddRange(renderer.materials);
-                    tmpList.Add(new Material(outlineShader));
+
+                    Material tmpOut = new Material(outlineShader);
+                    tmpOut.SetTexture("_MainTex", renderer.material.mainTexture);
+                    tmpOut.SetColor("_OutlineColor", color);
+                    //outlineWidth = Mathf.Clamp(outlineWidth, 0.0f, 1.0f);
+                    tmpOut.SetFloat("_Outline", outlineWidth);
+
+                    tmpList.Add(tmpOut);
                     outlineMateials.Add(tmpList.ToArray());
                 }
             }

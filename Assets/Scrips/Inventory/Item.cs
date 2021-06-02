@@ -2,18 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu( fileName = "Assets/Scrips/Inventory/Items/Item",menuName = "InventoryItem")]
 public class Item : ScriptableObject
 {
-    public int id;
-    new public string name;
-    public string description;
-    public Sprite icon;
+    public int ID;
+    public string Name;
+    public string Descprition;
+    public int MaxAmount;
+    public int Amount = 1;
 
-    public Item(int id,string name,string description,Sprite icon)
+
+    public Item(int ID,string Name,string Descprition, int MaxAmount)
     {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.icon = Resources.Load<Sprite>("Sprites/Items/" + name);
+        this.ID = ID;
+        this.Name = Name;
+        this.Descprition = Descprition;
+        this.MaxAmount = MaxAmount;
+        this.Amount = 1;
+    }
+
+    public void AddToInventory()
+    {
+        Inventory.instance.AddItem(this);
+    }
+
+    public void RemoveFromInventory()
+    {
+        Inventory.instance.RemoveItem(this);
     }
 }

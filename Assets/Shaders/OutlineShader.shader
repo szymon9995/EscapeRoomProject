@@ -1,77 +1,94 @@
 ﻿Shader "Projekt/OutlineShader"
 {
-	Properties{
-		_Color("Main Color", Color) = (.0,.0,.5,1)
-		_OutlineColor("Outline Color", Color) = (1,0,0,1)
-		_Outline("Outline width", Range(0, 1)) = 0.1
-		_MainTex("Texture", 2D) = "white" { }
-	}
+    Properties
+    {
+        _OutlineColor("Outline Color", Color) = (1,0,0,1)
+        _Outline("Outline width", Range(0, 1)) = 0.1
+        _MainTex("Texture", 2D) = "white" { }
+    }
+        SubShader
+    {
+        Tags { "RenderType" = "Opaque" }
+        LOD 100
 
-		SubShader
-	{
-		CGPROGRAM
-		#pragma surface surf Lambert
+        Pass
+        {
+            Cull Off
+            Zwrite Off
 
-		sampler2D _MainTex;
-		fixed4 _Color;
+            ZTest Always
 
-		struct Input
-		{
-		float2 uv_MainTex;
-		};
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
 
-		void surf(Input IN, inout SurfaceOutput o)
-		{
-			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-			o.Albedo = c.rgb;
-			o.Alpha = c.a;
-		}
-		ENDCG
+            #include "UnityCG.cginc"
 
-		Pass
-		{
-			Name "OUTLINE"
-			Tags { "LightMode" = "Always" }
-			Cull Front
-			ZWrite On
-			ColorMask RGB
-			Blend SrcAlpha OneMinusSrcAlpha
+            struct appdata
+            {
+                float4 vertex : POSITION;
+            };
 
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
+            struct v2f
+            {
+                float4 vertex : SV_POSITION;
+            };
 
+            uniform float _Outline;
+            uniform float4 _OutlineColor;
 
-			#include "UnityCG.cginc"
+            v2f vert(appdata v)
+            {
+                v2f o;
+                v.vertex *= (1 + _Outline);
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                return o;
+            }
 
-			struct appdata
-			{
-				float4 vertex : POSITION;
-				float3 normal : NORMAL;
-			};
+            fixed4 frag(v2f i) : SV_Target
+            {
+                return _OutlineColor;
+            }
+        ENDCG
+        }
 
-			struct v2f
-			{
-				float4 pos : POSITION;
-				float4 color : COLOR;
-			};
+         Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
 
-			uniform float _Outline;
-			uniform float4 _OutlineColor;
+            #include "UnityCG.cginc"
 
-			v2f vert(appdata v) {
-				v2f o;
-				v.vertex *= (1 + _Outline);
-				o.pos = UnityObjectToClipPos(v.vertex);
-				o.color = _OutlineColor;
-				return o;
-			}
-			half4 frag(v2f i) :COLOR
-			{
-				return i.color;
-			}
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+            };
 
-			ENDCG
-		}
-	}
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                float4 vertex : SV_POSITION;
+            };
+
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+
+            v2f vert(appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                return o;
+            }
+
+            fixed4 frag(v2f i) : SV_Target
+            {
+                fixed4 col = tex2D(_MainTex, i.uv);
+                return col;
+            }
+        ENDCG
+        }
+    }
 }

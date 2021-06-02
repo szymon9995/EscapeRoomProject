@@ -9,8 +9,9 @@ public class ItemHold : InteractibleBase
     public Transform heldParent;
 
     private bool isHeld=false;
-    public override float maxDistance => 10.0f;
-    [SerializeField] private float moveForce = 250.0f;
+    public override float maxDistance => 7.0f;
+    protected override Color color => Color.blue;
+    //[SerializeField] private float moveForce = 250.0f;
     [SerializeField] private float dragForce = 5.0f;
 
 

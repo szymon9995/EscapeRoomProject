@@ -8,8 +8,11 @@ public class OpenAndCloseObject : InteractibleBase
     private Animator objectAnimation = null;
     [SerializeField] private string stateOpen = null;
     [SerializeField] private string stateClose = null;
+    protected override Color color => Color.yellow; 
 
     private bool isOpen = false;
+
+    [SerializeField] private int itemID = 0;
 
     void OnDrawGizmosSelected()
     {
@@ -24,25 +27,28 @@ public class OpenAndCloseObject : InteractibleBase
         {
             objectAnimation = animator;
         }
-        color = Color.yellow;
+        
     }
 
     public override void OnInteract()
     {
-        if(objectAnimation != null)
+        if (itemID == 0 || Inventory.instance.containItem(itemID))
         {
-            if (AnimatorIsPlaying())
-                return;
+            if (objectAnimation != null)
+            {
+                if (AnimatorIsPlaying())
+                    return;
 
-            if(!isOpen && stateOpen!=null)
-            {
-                objectAnimation.Play(stateOpen, 0, 0);
-                isOpen = true;
-            }
-            else if(isOpen && stateClose != null)
-            {
-                objectAnimation.Play(stateClose, 0, 0);
-                isOpen = false;
+                if (!isOpen && stateOpen != null)
+                {
+                    objectAnimation.Play(stateOpen, 0, 0);
+                    isOpen = true;
+                }
+                else if (isOpen && stateClose != null)
+                {
+                    objectAnimation.Play(stateClose, 0, 0);
+                    isOpen = false;
+                }
             }
         }
     }
